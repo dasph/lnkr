@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": false
+  },
+  "fmt": {
+    "options": {
+      "lineWidth": 160,
+      "singleQuote": true
+    }
+  },
+  "importMap": "./map.json",
+  "tasks": {
+    "serve": "export $(cat ./.env | xargs) && deno run --allow-net --allow-env --allow-read --unstable --watch ./mod.ts"
+  }
+}
