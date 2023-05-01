@@ -6,11 +6,11 @@ on:
       - master
 
 env:
-  PROJECT: {{ PROJECT }}
-  LOCATION: {{ LOCATION }}
-  REPOSITORY: {{ REPOSITORY }}
-  SERVICE: {{ SERVICE }}
-  REGION: {{ REGION }}
+  PROJECT: ${{ PROJECT }}
+  LOCATION: ${{ LOCATION }}
+  REPOSITORY: ${{ REPOSITORY }}
+  SERVICE: ${{ SERVICE }}
+  REGION: ${{ REGION }}
 
 jobs:
   deploy:
