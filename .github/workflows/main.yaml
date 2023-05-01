@@ -43,4 +43,4 @@ jobs:
         region: ${{ vars.REGION }}
         image: ${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
         env_vars: |
-          FIRESTORE=${{ secrets.FIRESTORE }}
+          FIREBASE=${{ secrets.FIREBASE }}
