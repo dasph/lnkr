@@ -22,14 +22,14 @@ jobs:
     - name: Authenticate to Google Cloud 🔑
       uses: google-github-actions/auth@v1.1.0
       with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        credentials_json: '${{ secrets.GOOGLE }}'
 
     - name: Authenticate to Google Artifact Registry 🔑
       uses: docker/login-action@v2.1.0
       with:
         registry: ${{ vars.LOCATION }}-docker.pkg.dev
         username: _json_key
-        password: ${{ secrets.GCP_CREDENTIALS }}
+        password: ${{ secrets.GOOGLE }}
 
     - name: Build and Push Container 🏗️
       run: |-
@@ -42,3 +42,4 @@ jobs:
         service: ${{ vars.SERVICE }}
         region: ${{ vars.REGION }}
         image: ${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
+        env: FIRESTORE=${{ secrets.FIRESTORE }}
