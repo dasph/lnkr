@@ -5,13 +5,6 @@ on:
     branches:
       - master
 
-env:
-  PROJECT: ${{ PROJECT }}
-  LOCATION: ${{ LOCATION }}
-  REPOSITORY: ${{ REPOSITORY }}
-  SERVICE: ${{ SERVICE }}
-  REGION: ${{ REGION }}
-
 jobs:
   deploy:
     name: Deploy
