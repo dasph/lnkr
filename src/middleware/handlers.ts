@@ -1,9 +1,5 @@
-import { HttpError, Middleware } from 'oak'
-
-export const requestHandler: Middleware = ({ response }, next) => next().then(() => {
-  response.status === 404 && (response.body = { error: 'not found.' })
-})
+import { HttpError, Middleware, STATUS_TEXT, Status } from 'oak'
 
 export const errorHandler: Middleware = ({ response }, next) => next().catch((err) => {
-  response.body = { error: err instanceof HttpError ? err.message : 'something went wrong.' }
+  response.body = { error: err instanceof HttpError ? err.message : STATUS_TEXT[Status.InternalServerError] }
 })
