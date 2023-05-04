@@ -2,8 +2,8 @@ import { Middleware, Status } from 'oak'
 
 type MiddlewareArgs = Parameters<Middleware>
 
-const secret = Deno.env.get('USER')
-if (!secret) throw new Error('no user secret defined')
+const secret = Deno.env.get('AUTHORIZATION')
+if (!secret) throw new Error('no authorization secret defined')
 
 export const authorize: Middleware = (ctx: MiddlewareArgs[0], next) => {
   const auth = ctx.request.headers.get('authorization')
