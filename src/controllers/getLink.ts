@@ -8,17 +8,20 @@ type Params = {
 }
 
 type Middleware = RouterMiddleware<'/:alias', Params>
+type MiddlewareArgs = Parameters<Middleware>
 
-const handler: Middleware = async (ctx) => {
+const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const { alias } = ctx.params
 
   const res = await getDocs(query(collection('links'), where('alias', '==', alias), limit(1)))
-  if (res.empty) return ctx.throw(Status.NotFound)
+  ctx.assert(!res.empty, Status.NotFound)
 
   const [link] = res.docs
   const { value } = link.data()
 
-  const hit = { ip: compressIP(ctx.request.ip), link: link.ref, createdAt: new Date() }
+  const ip = compressIP(ctx.request.headers.get('x-forwarded-for')?.split(',')[0] || ctx.request.ip)
+
+  const hit = { ip, link: link.ref, createdAt: new Date() }
 
   addDocument<'hits'>(hit, 'hits').catch((error) => console.error(`⚠️ Unhandled error: ${error}`))
 
