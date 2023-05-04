@@ -41,5 +41,5 @@ jobs:
       with:
         image_url: ${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
         env_vars: |
-          USER=${{ secrets.USER }}
+          AUTHORIZATION=${{ secrets.AUTHORIZATION }}
           FIREBASE=${{ secrets.FIREBASE }}
