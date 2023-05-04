@@ -1,7 +1,7 @@
 import { initializeApp } from 'npm:firebase/app'
 import { getFirestore, doc, getDoc, addDoc, collection as col, DocumentReference, CollectionReference } from 'firestore'
 
-import { Collections, CollectionMap } from '~/types/mod.ts'
+import type { Collections, CollectionMap } from '~/types/mod.ts'
 
 const [apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, projectRoot] = Deno.env.get('FIREBASE')?.split('~') || []
 if (!apiKey || !authDomain || !projectId || !storageBucket || !messagingSenderId || !appId || !projectRoot) throw new Error('missing firebase keys')

@@ -1,5 +1,4 @@
-import { Status } from 'https://deno.land/std@0.183.0/http/http_status.ts'
-import { Middleware } from 'oak'
+import { Middleware, Status } from 'oak'
 
 type MiddlewareArgs = Parameters<Middleware>
 

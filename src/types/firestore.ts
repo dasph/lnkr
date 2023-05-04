@@ -1,4 +1,4 @@
-import { DocumentReference } from 'firestore'
+import type { DocumentReference } from 'firestore'
 
 export type Collections = 'refs' | 'links' | 'hits'
 
