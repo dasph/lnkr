@@ -36,10 +36,12 @@ jobs:
         docker build -t "${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}" ./
         docker push "${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}"
 
-    - name: Deploy to App Engine 🚀
-      uses: google-github-actions/deploy-appengine@v1
+    - name: Deploy to Cloud Run 🚀
+      uses: google-github-actions/deploy-cloudrun@v1.0.1
       with:
-        image_url: ${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
+        service: ${{ vars.SERVICE }}
+        region: ${{ vars.REGION }}
+        image: ${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
         env_vars: |
           AUTHORIZATION=${{ secrets.AUTHORIZATION }}
           FIREBASE=${{ secrets.FIREBASE }}
