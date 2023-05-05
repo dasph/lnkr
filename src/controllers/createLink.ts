@@ -2,6 +2,7 @@ import { RouterMiddleware, Status } from 'oak'
 
 import type { LocalState } from '~/types/mod.ts'
 
+import { isHttpUrl } from '~/helpers/mod.ts'
 import { addDocument } from '~/middleware/mod.ts'
 import { getRef, getUniqueAlias } from '~/services/mod.ts'
 
@@ -20,6 +21,8 @@ const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
 
   ctx.assert('ref' in form && typeof form.ref === 'string', Status.NotAcceptable, 'Missing string property: ref')
   ctx.assert('value' in form && typeof form.value === 'string', Status.NotAcceptable, 'Missing string property: value')
+
+  ctx.assert(isHttpUrl(form.value), Status.NotAcceptable, 'Incorrect string property: value - has to be an URL')
 
   const { ref, value } = form
   ctx.state.local = { ref, value }
