@@ -1,8 +1,5 @@
 FROM denoland/deno:1.27.2
 
-ARG PORT
-ARG FIREBASE
-
 EXPOSE 8080
 
 WORKDIR /app
