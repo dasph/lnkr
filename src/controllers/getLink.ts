@@ -19,7 +19,7 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const [link] = res.docs
   const { value } = link.data()
 
-  const ip = compressIP(ctx.request.headers.get('x-forwarded-for')?.split(',')[0] || ctx.request.ip)
+  const ip = compressIP(ctx.request.ip)
 
   const hit = { ip, link: link.ref, createdAt: new Date() }
 
