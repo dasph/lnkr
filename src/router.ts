@@ -1,7 +1,7 @@
 import { Router } from 'oak'
 
 import { authorize, errorHandler } from '~/middleware/mod.ts'
-import { createLinkController, getLinkController } from '~/controllers/mod.ts'
+import { createLinkController, getLinkController, getStatsController } from '~/controllers/mod.ts'
 
 export const router = new Router({ strict: true, sensitive: true })
   .use(errorHandler)
@@ -9,3 +9,4 @@ export const router = new Router({ strict: true, sensitive: true })
   .post('/', authorize, ...createLinkController)
 
   .get('/:alias', ...getLinkController)
+  .get('/stats', ...getStatsController)
