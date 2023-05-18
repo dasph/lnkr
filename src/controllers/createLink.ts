@@ -30,7 +30,7 @@ const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
   return next()
 }
 
-export const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
+const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const { value, ref: name } = ctx.state.local
 
   const [ref, alias] = await Promise.all([getRef(name), getUniqueAlias()])
