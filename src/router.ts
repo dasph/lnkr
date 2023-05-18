@@ -9,4 +9,4 @@ export const router = new Router({ strict: true, sensitive: true })
   .post('/', authorize, ...createLinkController)
 
   .get('/:alias', ...getLinkController)
-  .get('/stats', ...getStatsController)
+  .get('/stats/:days?', ...getStatsController)
