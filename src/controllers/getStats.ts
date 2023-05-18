@@ -20,7 +20,7 @@ const validator: Middleware = (ctx: MiddlewareArgs[0], next) => {
   ctx.assert(days > 0, Status.BadRequest, 'Days should have a positive value')
   ctx.assert(days < 8, Status.BadRequest, 'Days value can not exceed 7')
 
-  ctx.state.local = { days: 7 }
+  ctx.state.local = { days }
 
   return next()
 }
