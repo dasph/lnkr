@@ -2,6 +2,8 @@ import { RouterMiddleware, Status } from 'oak'
 
 import type { LocalState } from '~/types/mod.ts'
 
+import { collection, getCount, getDocs, limit, query, where } from '~/middleware/mod.ts'
+
 type Params = {
   days?: string
 }
@@ -25,10 +27,21 @@ const validator: Middleware = (ctx: MiddlewareArgs[0], next) => {
   return next()
 }
 
-export const handler: Middleware = (ctx: MiddlewareArgs[0]) => {
+export const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const { days } = ctx.state.local
+  const from = new Date(Date.now() - days * 8.64e7)
 
-  ctx.response.status = Status.OK
+  const { docs: linkDocs } = await getDocs(query(collection('links'), limit(16)))
+
+  const links = linkDocs.map((doc) => ({ ref: doc.ref, alias: doc.data().alias }))
+
+  const counts = await Promise.all(links.map(async ({ alias, ref }) => {
+    const snapshot = await getCount(query(collection('hits'), where('link', '==', ref), where('createdAt', '>', from)))
+
+    return ({ alias, count: snapshot.data().count })
+  }))
+
+  ctx.response.body = counts
 }
 
 export const getStatsController = [validator, handler] as const
