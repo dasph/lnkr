@@ -8,6 +8,6 @@ export const router = new Router({ strict: true, sensitive: true })
 
   .post('/', authorize, ...createLinkController)
 
-  .get('/stats/:days?', ...getStatsController)
+  .get('/stats/:days?', authorize, ...getStatsController)
 
   .get('/:alias', ...getLinkController)
