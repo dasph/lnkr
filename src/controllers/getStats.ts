@@ -2,6 +2,7 @@ import { RouterMiddleware, Status } from 'oak'
 
 import type { LocalState } from '~/types/mod.ts'
 
+import { createTable } from '~/helpers/mod.ts'
 import { collection, getCount, getDocs, limit, query, where } from '~/middleware/mod.ts'
 
 type Params = {
@@ -41,7 +42,10 @@ export const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
     return ({ alias, count: snapshot.data().count })
   }))
 
-  ctx.response.body = counts
+  const totalCount = counts.reduce((ctx, curr) => ctx + curr.count, 0)
+  const extCounts = counts.map((data) => ({ ...data, percent: `${~~(data.count / totalCount * 100)}%` }))
+
+  ctx.response.body = createTable(extCounts)
 }
 
 export const getStatsController = [validator, handler] as const
