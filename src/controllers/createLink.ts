@@ -38,7 +38,7 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   ctx.assert(ref.id, Status.InternalServerError, 'Failed to obtain a referer')
   ctx.assert(alias, Status.InternalServerError, 'Failed to create a unique alias')
 
-  const doc = await addDocument<'links'>({ value, ref, alias, createdAt: new Date() }, 'links')
+  const doc = await addDocument({ value, ref, alias, createdAt: new Date() }, 'links')
 
   ctx.assert(doc.id, Status.InternalServerError, 'Failed to create an entry')
 

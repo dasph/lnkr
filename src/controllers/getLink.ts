@@ -24,7 +24,7 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
 
   const hit = { ip, link: link.ref, createdAt: new Date() }
 
-  addDocument<'hits'>(hit, 'hits').catch((error) => console.error(`⚠️ Unhandled error: ${error}`))
+  addDocument(hit, 'hits').catch((error) => console.error(`⚠️ Unhandled error: ${error}`))
 
   ctx.response.redirect(value)
 }
