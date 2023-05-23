@@ -1,6 +1,6 @@
 import type { DocumentReference } from 'firestore'
 
-export type Collections = 'refs' | 'links' | 'hits'
+export type Collections = 'refs' | 'links' | 'hits' | 'ips'
 
 export type Ref = {
   value: string
@@ -15,12 +15,19 @@ export type Link = {
 }
 
 export type Hit = {
-  ip: number
+  ip: DocumentReference<Ip>
   link: DocumentReference<Link>
   createdAt: Date
 }
 
+export type Ip = {
+  value: number
+  lastActive: Date
+  createdAt: Date
+}
+
 export type CollectionMap = {
+  ips: Ip
   refs: Ref
   hits: Hit
   links: Link
