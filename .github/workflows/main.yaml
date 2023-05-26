@@ -50,4 +50,4 @@ jobs:
       run: |-
         SERVICE=${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}
         DIGESTS=$(gcloud artifacts docker images list $SERVICE --sort-by=update_time --format='value(DIGEST)' | head -n -1)
-        while read -r DIGEST; do gcloud artifacts docker images delete "$SERVICE:$DIGEST" --quiet; done <<< $DIGESTS
+        while read -r DIGEST; do gcloud artifacts docker images delete "$SERVICE@:$DIGEST" --quiet; done <<< $DIGESTS
