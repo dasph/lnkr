@@ -46,6 +46,11 @@ jobs:
           AUTHORIZATION=${{ secrets.AUTHORIZATION }}
           FIREBASE=${{ secrets.FIREBASE }}
 
+    - name: Cleanup Google Cloud Run 🧹
+      run: |-
+        REVISIONS=$(gcloud run revisions list --service=${{ vars.SERVICE }} --region=${{ vars.REGION }} --filter="status.conditions.status:'False'" --format='value(REVISION)')
+        while read -r REVISION; do gcloud run revisions delete $REVISION --region=${{ vars.REGION }} --quiet; done <<< $REVISIONS
+
     - name: Cleanup Google Artifact Registry 🧹
       run: |-
         SERVICE=${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}
