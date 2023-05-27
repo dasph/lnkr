@@ -3,8 +3,12 @@ FROM denoland/deno:1.27.2
 EXPOSE 8080
 
 WORKDIR /app
+COPY . /app
 
-ADD . /app
+ARG FIREBASE
+ARG AUTHORIZATION
+
+ENV FIREBASE=${FIREBASE} AUTHORIZATION=${AUTHORIZATION}
 
 RUN deno cache mod.ts --unstable
 

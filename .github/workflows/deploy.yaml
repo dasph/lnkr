@@ -33,8 +33,11 @@ jobs:
 
     - name: Build and Push Container 🏗️
       run: |-
-        docker build -t "${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}" ./
-        docker push "${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}"
+        IMAGE=${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
+        docker build -t $IMAGE \
+          --build-arg FIREBASE=${{ secrets.FIREBASE }} \
+          --build-arg AUTHORIZATION=${{ secrets.AUTHORIZATION }} ./
+        docker push $IMAGE
 
     - name: Deploy to Cloud Run 🚀
       uses: google-github-actions/deploy-cloudrun@v1.0.1
@@ -42,9 +45,6 @@ jobs:
         service: ${{ vars.SERVICE }}
         region: ${{ vars.REGION }}
         image: ${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
-        env_vars: |
-          AUTHORIZATION=${{ secrets.AUTHORIZATION }}
-          FIREBASE=${{ secrets.FIREBASE }}
 
     - name: Cleanup Google Cloud Run 🧹
       run: |-
