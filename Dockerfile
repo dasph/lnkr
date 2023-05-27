@@ -12,4 +12,4 @@ ENV FIREBASE=${FIREBASE} AUTHORIZATION=${AUTHORIZATION}
 
 RUN deno cache mod.ts --unstable
 
-CMD ["run", "--allow-net", "--allow-env", "--allow-read", "--unstable", "mod.ts"]
+CMD ["deno", "task", "run"]
