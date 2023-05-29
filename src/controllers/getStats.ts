@@ -2,8 +2,8 @@ import { RouterMiddleware, Status } from 'oak'
 
 import type { LocalState } from '~/types/mod.ts'
 
-import { createTable } from '~/helpers/mod.ts'
-import { collection, getCount, getDocs, limit, query, where } from '~/middleware/mod.ts'
+import { createTable, prettyUrl } from '~/helpers/mod.ts'
+import { collection, documentId, getCount, getDocs, limit, query, where } from '~/middleware/mod.ts'
 
 type Params = {
   days?: string
@@ -34,12 +34,18 @@ export const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
 
   const { docs: linkDocs } = await getDocs(query(collection('links'), limit(16)))
 
-  const links = linkDocs.map((doc) => ({ ref: doc.ref, alias: doc.data().alias }))
+  const refIds = [...new Set(linkDocs.map((link) => link.data().ref.id))]
 
-  const counts = await Promise.all(links.map(async ({ alias, ref }) => {
-    const snapshot = await getCount(query(collection('hits'), where('link', '==', ref), where('createdAt', '>', from)))
+  const { docs: refDocs } = await getDocs(query(collection('refs'), where(documentId(), 'in', refIds)))
 
-    return ({ alias, count: snapshot.data().count })
+  const refs = Object.fromEntries(refDocs.map((doc) => [doc.id, doc.data().value]))
+
+  const links = linkDocs.map((doc) => ({ linkRef: doc.ref, ...doc.data() })).map(({ ref, linkRef, alias, value }) => ({ alias, linkRef, ref: refs[ref.id], target: prettyUrl(value) }))
+
+  const counts = await Promise.all(links.map(async ({ alias, ref, linkRef, target }) => {
+    const snapshot = await getCount(query(collection('hits'), where('link', '==', linkRef), where('createdAt', '>', from)))
+
+    return ({ alias, target, ref, count: snapshot.data().count })
   }))
 
   const totalCount = counts.reduce((ctx, curr) => ctx + curr.count, 0)
