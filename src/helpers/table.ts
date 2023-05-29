@@ -1,4 +1,4 @@
-const MIN_COLUMN_WIDTH = 8
+const MIN_COLUMN_WIDTH = 10
 
 const roundUpEven = (number: number): number => Math.ceil(number / 2.0) * 2
 
@@ -9,7 +9,8 @@ const left = (value: string, length: number): string => {
 
 const center = (value: string, length: number): string => {
   const padding = ' '.repeat(roundUpEven(length - value.length) / 2)
-  return `${padding}${value}${padding}`
+  const shim = ' '.repeat(1 - (length - value.length) % 2)
+  return `${padding}${value}${padding}${shim}`
 }
 
 export const createTable = (data: Record<string, string | number>[]) => {
@@ -18,7 +19,7 @@ export const createTable = (data: Record<string, string | number>[]) => {
     return ctx
   }, new Set()).values()]
 
-  const columns = headerEntries.map((value) => ({ value, width: Math.max(MIN_COLUMN_WIDTH, ...data.map((entry) => `${entry[value]}`.length)) }))
+  const columns = headerEntries.map((value) => ({ value, width: roundUpEven(Math.max(MIN_COLUMN_WIDTH, ...data.map((entry) => `${entry[value]}`.length))) }))
 
   return [
     `┌${columns.map(({ width }) => '─'.repeat(roundUpEven(width) + 1)).join('┬')}┐`,
