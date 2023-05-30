@@ -37,13 +37,11 @@ jobs:
 
     - name: Build and Push Container 🏗️
       run: |-
-        REPO=${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}
-        IMAGE=$REPO:${{ github.sha }}
+        IMAGE=${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
         docker build -t $IMAGE \
           --build-arg FIREBASE=${{ secrets.FIREBASE }} \
           --build-arg AUTHORIZATION=${{ secrets.AUTHORIZATION }} ./
-        docker tag $IMAGE $REPO:latest
-        docker push $REPO:latest
+        docker push $IMAGE
 
     - name: Deploy to Cloud Run 🚀
       uses: google-github-actions/deploy-cloudrun@v1.0.1
