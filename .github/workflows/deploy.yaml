@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+concurrency:
+  group: ${{ github.repository }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     name: Deploy
