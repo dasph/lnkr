@@ -3,7 +3,7 @@ import { RouterMiddleware, Status } from 'oak'
 import type { LocalState } from '~/types/mod.ts'
 
 import { createTable, prettyUrl } from '~/helpers/mod.ts'
-import { collection, documentId, getCount, getDocs, limit, query, where } from '~/middleware/mod.ts'
+import { collection, documentId, getCount, getDocs, limit, orderBy, query, where } from '~/middleware/mod.ts'
 
 type Params = {
   days?: string
@@ -32,7 +32,7 @@ export const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const { days } = ctx.state.local
   const from = new Date(Date.now() - days * 8.64e7)
 
-  const { docs: linkDocs } = await getDocs(query(collection('links'), limit(16)))
+  const { docs: linkDocs } = await getDocs(query(collection('links'), orderBy('alias'), limit(16)))
 
   const refIds = [...new Set(linkDocs.map((link) => link.data().ref.id))]
 

@@ -18,4 +18,4 @@ export const findDocument = <T extends Collections> (...path: [T, ...string[]]) 
 
 export const addDocument = <T extends Collections> (data: CollectionMap[T], ...path: [T, ...string[]]) => addDoc(collection<T>(...path), data)
 
-export { documentId, getCount, getDocs, query, where, limit, limitToLast, updateDoc, DocumentReference, Timestamp } from 'firestore'
+export { documentId, getCount, getDocs, query, where, limit, limitToLast, orderBy, updateDoc, DocumentReference, Timestamp } from 'firestore'
