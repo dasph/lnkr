@@ -2,6 +2,6 @@
   "imports": {
      "~/": "./src/",
      "firestore": "npm:firebase/firestore/lite",
-     "oak": "https://deno.land/x/oak@v12.3.0/mod.ts"
+     "oak": "https://deno.land/x/oak@v16.0.0/mod.ts"
   }
 }

@@ -15,7 +15,7 @@ type Middleware = RouterMiddleware<'/', Record<never, never>, LocalState<State>>
 type MiddlewareArgs = Parameters<Middleware>
 
 const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
-  const form: unknown = await ctx.request.body({ type: 'json', limit: 1024 }).value
+  const form: unknown = await ctx.request.body.json().catch(() => undefined)
 
   ctx.assert(typeof form === 'object' && form !== null, Status.BadRequest, 'Missing payload')
 
