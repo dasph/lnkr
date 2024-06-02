@@ -1,4 +1,4 @@
-name: Build and Deploy to Cloud Run
+name: Build and Deploy
 
 on:
   push:
@@ -23,40 +23,23 @@ jobs:
     - name: Checkout 🛎️
       uses: actions/checkout@v3
 
-    - name: Authenticate to Google Cloud 🔑
-      uses: google-github-actions/auth@v1.1.0
-      with:
-        credentials_json: '${{ secrets.GOOGLE }}'
-
-    - name: Authenticate to Google Artifact Registry 🔑
-      uses: docker/login-action@v2.1.0
-      with:
-        registry: ${{ vars.LOCATION }}-docker.pkg.dev
-        username: _json_key
-        password: ${{ secrets.GOOGLE }}
+    - name: Authenticate to the Registry 🔑
+      run: echo '${{ secrets.REGISTRY_PASSWORD }}' | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USER }} --password-stdin
 
     - name: Build and Push Container 🏗️
       run: |-
-        IMAGE=${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
+        REPO=${{ secrets.REGISTRY_URL }}/${{ vars.SERVICE }}
+        IMAGE=$REPO:${{ github.sha }}
         docker build -t $IMAGE \
-          --build-arg FIREBASE=${{ secrets.FIREBASE }} \
+          --build-arg RP=${{ vars.RP }} \
+          --build-arg PORT=${{ vars.PORT }} \
           --build-arg AUTHORIZATION=${{ secrets.AUTHORIZATION }} ./
-        docker push $IMAGE
+        docker tag $IMAGE $REPO:latest
+        docker push $REPO:latest
 
-    - name: Deploy to Cloud Run 🚀
-      uses: google-github-actions/deploy-cloudrun@v1.0.1
-      with:
-        service: ${{ vars.SERVICE }}
-        region: ${{ vars.REGION }}
-        image: ${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}:${{ github.sha }}
-
-    - name: Cleanup Google Cloud Run 🧹
+    - name: Deploy 🚀
       run: |-
-        REVISIONS=$(gcloud run revisions list --service=${{ vars.SERVICE }} --region=${{ vars.REGION }} --filter="status.conditions.status:'False'" --format='value(REVISION)')
-        while read -r REVISION; do gcloud run revisions delete $REVISION --region=${{ vars.REGION }} --quiet; done <<< $REVISIONS
+        curl ${{ secrets.CD_URL }}/${{ vars.SERVICE }} -H 'authorization: ${{ secrets.CD_AUTHORIZATION }}'
 
-    - name: Cleanup Google Artifact Registry 🧹
-      run: |-
-        SERVICE=${{ vars.LOCATION }}-docker.pkg.dev/${{ vars.PROJECT }}/${{ vars.REPOSITORY }}/${{ vars.SERVICE }}
-        DIGESTS=$(gcloud artifacts docker images list $SERVICE --sort-by=update_time --format='value(DIGEST)' | head -n -1)
-        while read -r DIGEST; do gcloud artifacts docker images delete "$SERVICE@$DIGEST" --delete-tags --quiet; done <<< $DIGESTS
+    # - name: Cleanup the Registry 🧹
+    #   run: |-
