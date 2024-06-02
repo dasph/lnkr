@@ -1,15 +1,33 @@
-FROM denoland/deno:1.27.2
+FROM denoland/deno:alpine-1.44.0 as cache
 
-EXPOSE 8080
+WORKDIR /app
+COPY deps.ts map.json deno.json deno.lock ./
+
+RUN deno cache deps.ts
+
+FROM denoland/deno:alpine-1.44.0 as build
 
 WORKDIR /app
 COPY . /app
 
-ARG FIREBASE
+COPY --from=cache /deno-dir /deno-dir
+
+RUN deno task build
+
+FROM alpine
+
+COPY --from=build --chown=root:root --chmod=755 /lib /lib
+COPY --from=build --chown=root:root --chmod=755 /lib64 /lib64
+COPY --from=build --chown=root:root --chmod=755 /usr/local/lib /usr/local/lib
+
+ARG RP
+ARG PORT
 ARG AUTHORIZATION
 
-ENV FIREBASE=${FIREBASE} AUTHORIZATION=${AUTHORIZATION}
+ENV LD_LIBRARY_PATH=/usr/local/lib RP=${RP} PORT=${PORT} AUTHORIZATION=${AUTHORIZATION}
 
-RUN deno cache mod.ts --unstable
+WORKDIR /app
 
-CMD ["deno", "task", "run"]
+COPY --from=build /app/dist/lnkr .
+
+CMD /app/lnkr
