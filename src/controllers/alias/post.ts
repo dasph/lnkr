@@ -24,7 +24,7 @@ const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
 
   const value = btoa(encodeURI(form.value))
 
-  ctx.assert(value.length < 513, Status.RequestURITooLong, 'Faulty string property: value - too long')
+  ctx.assert(value.length < 1025, Status.RequestURITooLong, 'Faulty string property: value - too long')
 
   ctx.assert('tags' in form && Array.isArray(form.tags) && form.tags.length < 17 && form.tags.every((tag) => typeof tag === 'string' && /^[A-Za-z0-9\-_@]{1,32}$/.test(tag)), Status.NotAcceptable, 'Faulty property: tags')
 

@@ -34,7 +34,7 @@ psql -v ON_ERROR_STOP=1 <<-EOSQL
 
   CREATE TABLE links (
     id            integer primary key,
-    value         character varying(512) NOT null,
+    value         character varying(1024) NOT null,
     "userId"      uuid NOT null references users ON DELETE CASCADE,
     "createdAt"   timestamp with time zone NOT null DEFAULT NOW()
   );
