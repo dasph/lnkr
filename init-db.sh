@@ -29,6 +29,9 @@ psql -v ON_ERROR_STOP=1 <<-EOSQL
 
   CREATE TABLE ips (
     id            inet primary key,
+    location      point NOT null,
+    country       character (2) NOT null,
+    "updatedAt"   timestamp with time zone NOT null DEFAULT NOW(),
     "createdAt"   timestamp with time zone NOT null DEFAULT NOW()
   );
 

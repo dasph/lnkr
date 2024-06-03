@@ -35,9 +35,11 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
 
   ctx.assert(link, Status.NotFound)
 
+  const country = ctx.request.headers.get('cf-ipcountry')?.slice(0, 2) || '00'
+  const location = `(${(ctx.request.headers.get('cf-iplatitude') || '0')}, ${ctx.request.headers.get('cf-iplongitude') || '0'})`
   const [ip] = ctx.request.headers.get('x-forwarded-for')?.split(',').map((value) => value.trim()) || [ctx.request.ip]
 
-  hit({ ip, linkId: link.id })
+  hit({ ip, country, location, linkId: link.id })
 
   ctx.response.redirect(decodeURI(atob(link.value)))
 }

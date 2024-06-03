@@ -1,3 +1,5 @@
+import type { Point } from 'postgres/types'
+
 export type User = {
   id: string
   name: string
@@ -23,6 +25,9 @@ export type Tag = {
 
 export type Ip = {
   id: string
+  contry: string
+  location: Point
+  updatedAt: Date
   createdAt: Date
 }
 
