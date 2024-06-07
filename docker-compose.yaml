@@ -15,14 +15,10 @@ services:
   redis:
     image: redis:alpine
     restart: unless-stopped
-    networks:
-      - default
 
   postgres:
     image: postgres:alpine
     restart: unless-stopped
-    networks:
-      - default
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
@@ -33,4 +29,3 @@ networks:
   nginx:
     name: nginx
     external: true
-  default:
