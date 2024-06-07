@@ -26,10 +26,10 @@ ARG AUTHORIZATION
 
 ENV LD_LIBRARY_PATH=/usr/local/lib RP=${RP} PORT=${PORT} AUTHORIZATION=${AUTHORIZATION}
 
-COPY --from=build /app/dist .
+COPY --from=cache --chown=root:root --chmod=755 /lib /lib
+COPY --from=cache --chown=root:root --chmod=755 /lib64 /lib64
+COPY --from=cache --chown=root:root --chmod=755 /usr/local/lib /usr/local/lib
 
-COPY --from=build --chown=root:root --chmod=755 /lib /lib
-COPY --from=build --chown=root:root --chmod=755 /lib64 /lib64
-COPY --from=build --chown=root:root --chmod=755 /usr/local/lib /usr/local/lib
+COPY --from=build /app/dist .
 
 CMD ./lnkr
