@@ -1,4 +1,4 @@
-import type { VerifiedRegistrationResponse } from 'simplewebauthn'
+import type { VerifiedRegistrationResponse } from 'simplewebauthn/server'
 import type { AuthenticatorAttestationResponseJSON } from 'simplewebauthn/types'
 
 import type { User } from '~/types/mod.ts'

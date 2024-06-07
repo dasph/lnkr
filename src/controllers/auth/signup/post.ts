@@ -1,7 +1,7 @@
 import type { RegistrationResponseJSON } from 'simplewebauthn/types'
 
 import { type RouterMiddleware, Status } from 'oak'
-import { verifyRegistrationResponse } from 'simplewebauthn'
+import { verifyRegistrationResponse } from 'simplewebauthn/server'
 
 import type { LocalState, AuthPayload } from '~/types/mod.ts'
 

@@ -6,7 +6,7 @@
      "redis": "https://deno.land/x/redis@v0.32.3/mod.ts",
      "postgres": "https://deno.land/x/postgres@v0.19.3/mod.ts",
      "postgres/types": "https://deno.land/x/postgres@v0.19.3/query/types.ts",
-     "simplewebauthn": "https://deno.land/x/simplewebauthn@v10.0.0/deno/server.ts",
-     "simplewebauthn/types": "https://deno.land/x/simplewebauthn@v10.0.0/deno/types.ts"
+     "simplewebauthn/types": "https://deno.land/x/simplewebauthn@v10.0.0/deno/types.ts",
+     "simplewebauthn/server": "https://deno.land/x/simplewebauthn@v10.0.0/deno/server.ts"
   }
 }
