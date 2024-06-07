@@ -10,8 +10,8 @@
   },
   "importMap": "./map.json",
   "tasks": {
-    "run": "deno run --allow-net --allow-env ./mod.ts",
-    "build": "deno compile --allow-net --allow-env -o ./dist/lnkr ./mod.ts",
-    "serve": "export $(cat ./.env | xargs) && deno run --allow-net --allow-env --watch ./mod.ts"
+    "run": "deno run --allow-net --allow-env ./src/mod.ts",
+    "build": "deno compile --allow-net --allow-env -o ./dist/lnkr ./src/mod.ts",
+    "serve": "export $(cat ./.env | xargs) && deno run --allow-net --allow-env --watch ./src/mod.ts"
   }
 }
