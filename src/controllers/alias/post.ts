@@ -1,6 +1,6 @@
 import { RouterMiddleware, Status } from 'oak'
 
-import type { LocalState, User } from '~/types/mod.ts'
+import type { AuthorizedState } from '~/types/mod.ts'
 
 import { tagLink } from '~/services/mod.ts'
 import { postgres } from '~/middleware/mod.ts'
@@ -11,7 +11,7 @@ type State = {
   tags: string[]
 }
 
-type Middleware = RouterMiddleware<'', Record<never, never>, LocalState<State>>
+type Middleware = RouterMiddleware<'', Record<never, never>, AuthorizedState<State>>
 type MiddlewareArgs = Parameters<Middleware>
 
 const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
@@ -34,13 +34,9 @@ const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
 }
 
 const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
-  const { value, tags } = ctx.state.local
+  const { user, local: { value, tags }} = ctx.state
 
   const [linkId] = crypto.getRandomValues(new Uint32Array(1)).map((value) => (value >>> 2) + radix65 ** 4)
-
-  const { rows: [user] } = await postgres.queryObject<Pick<User, 'id'>>(`select id from users where true limit 1`)
-
-  ctx.assert(user, Status.NotFound, 'No available user')
 
   await postgres.queryObject(`insert into links (id, value, "userId") values ($1, $2, $3)`, [linkId, value, user.id])
 

@@ -46,7 +46,6 @@ jobs:
         build-args: |
           RP=${{ vars.RP }}
           PORT=${{ vars.PORT }}
-          AUTHORIZATION=${{ secrets.AUTHORIZATION }}
 
     - name: Deploy 🚀
       run: |-

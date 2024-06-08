@@ -22,9 +22,8 @@ WORKDIR /app
 
 ARG RP
 ARG PORT
-ARG AUTHORIZATION
 
-ENV LD_LIBRARY_PATH=/usr/local/lib RP=${RP} PORT=${PORT} AUTHORIZATION=${AUTHORIZATION}
+ENV LD_LIBRARY_PATH=/usr/local/lib RP=${RP} PORT=${PORT}
 
 COPY --from=cache --chown=root:root --chmod=755 /lib /lib
 COPY --from=cache --chown=root:root --chmod=755 /lib64 /lib64

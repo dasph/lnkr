@@ -18,6 +18,13 @@ psql -v ON_ERROR_STOP=1 <<-EOSQL
     "lastUsedAt"  timestamp with time zone NOT null DEFAULT NOW()
   );
 
+  CREATE TABLE tokens (
+    id            uuid primary key DEFAULT gen_random_uuid(),
+    "userId"      uuid NOT null references users ON DELETE CASCADE,
+    "createdAt"   timestamp with time zone NOT null DEFAULT NOW(),
+    "lastUsedAt"  timestamp with time zone NOT null DEFAULT NOW()
+  );
+
   CREATE TABLE tags (
     id            uuid primary key DEFAULT gen_random_uuid(),
     value         character varying(32) NOT null,
@@ -57,6 +64,4 @@ psql -v ON_ERROR_STOP=1 <<-EOSQL
 
     PRIMARY KEY (tag, link)
   );
-
-  insert into users (id, name) values (gen_random_uuid(), 'root');
 EOSQL

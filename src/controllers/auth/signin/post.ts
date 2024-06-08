@@ -6,7 +6,8 @@ import { verifyAuthenticationResponse } from 'simplewebauthn/server'
 import type { LocalState, AuthPayload } from '~/types/mod.ts'
 
 import { redis } from '~/middleware/mod.ts'
-import { queryAuthenticator, signin } from '~/services/mod.ts'
+import { tokenCookies } from '~/helpers/mod.ts'
+import { queryAuthenticator, signin, tokens } from '~/services/mod.ts'
 import { expectedOrigin, rpID as expectedRPID } from '~/consts/mod.ts'
 
 type State = {
@@ -45,7 +46,10 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const { verified, authenticationInfo } = await verifyAuthenticationResponse({ authenticator, expectedChallenge, expectedOrigin, expectedRPID, response })
   ctx.assert(authenticationInfo, Status.Conflict, 'Failed to verify the authentication')
 
-  signin({ id, counter: BigInt(authenticationInfo.newCounter) })
+  const userId = await signin({ id, counter: BigInt(authenticationInfo.newCounter) })
+
+  const cookies = await tokens({ userId }).then(tokenCookies)
+  await Promise.all(cookies.map((args) => ctx.cookies.set(...args)))
 
   ctx.response.body = { verified }
 }

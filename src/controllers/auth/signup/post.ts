@@ -5,8 +5,9 @@ import { verifyRegistrationResponse } from 'simplewebauthn/server'
 
 import type { LocalState, AuthPayload } from '~/types/mod.ts'
 
-import { signup } from '~/services/mod.ts'
 import { redis } from '~/middleware/mod.ts'
+import { tokenCookies } from '~/helpers/mod.ts'
+import { signup, tokens } from '~/services/mod.ts'
 import { expectedOrigin, rpID as expectedRPID } from '~/consts/mod.ts'
 
 type State = {
@@ -45,7 +46,10 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
 
   ctx.assert(registrationInfo, Status.Conflict, 'Failed to verify the registration')
 
-  await signup({ name, registrationInfo, response: response.response })
+  const userId = await signup({ name, registrationInfo, response: response.response })
+
+  const cookies = await tokens({ userId }).then(tokenCookies)
+  await Promise.all(cookies.map((args) => ctx.cookies.set(...args)))
 
   ctx.response.body = { verified }
 }

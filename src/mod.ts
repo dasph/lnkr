@@ -7,7 +7,7 @@ const port = +`${Deno.env.get('PORT')}`
 if (!port) throw new Error('no application port defined')
 
 new Application()
-  .use(cors())
+  .use(cors({ credentials: true, origin: true }))
   .use(router.routes())
   .use(router.allowedMethods())
 

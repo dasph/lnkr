@@ -1,7 +1,7 @@
 import type { VerifiedRegistrationResponse } from 'simplewebauthn/server'
 import type { AuthenticatorAttestationResponseJSON } from 'simplewebauthn/types'
 
-import type { User } from '~/types/mod.ts'
+import type { Passkey, User } from '~/types/mod.ts'
 
 import { postgres } from '~/middleware/mod.ts'
 
@@ -16,14 +16,18 @@ type SignupProps = {
   registrationInfo: Required<VerifiedRegistrationResponse>['registrationInfo']
 }
 
-export const signin = async ({ counter, id }: SigninProps): Promise<void> => {
-  await postgres.queryObject(`update passkeys set counter = $1, "lastUsedAt" = $2 where id = $3`, [counter, new Date(), id])
+export const signin = async ({ counter, id }: SigninProps): Promise<string> => {
+  const { rows: [{ userId }] } = await postgres.queryObject<Pick<Passkey, 'userId'>>(`update passkeys set counter = $1, "lastUsedAt" = $2 where id = $3 returning "userId"`, [counter, new Date(), id])
+
+  return userId
 }
 
-export const signup = async ({ name, response, registrationInfo: { counter, credentialID, credentialPublicKey } }: SignupProps): Promise<void> => {
+export const signup = async ({ name, response, registrationInfo: { counter, credentialID, credentialPublicKey } }: SignupProps): Promise<string> => {
   const transports = response.transports?.join(',') || ''
 
-  const { rows: [{ id }] } = await postgres.queryObject<Pick<User, 'id'>>(`insert into users (name) values ($1) returning id`, [name])
+  const { rows: [{ id: userId }] } = await postgres.queryObject<Pick<User, 'id'>>(`insert into users (name) values ($1) returning id`, [name])
 
-  await postgres.queryObject(`insert into passkeys (id, key, counter, transports, "userId") values ($1, $2, $3, $4, $5)`, [credentialID, credentialPublicKey, counter, transports, id])
+  await postgres.queryObject(`insert into passkeys (id, key, counter, transports, "userId") values ($1, $2, $3, $4, $5)`, [credentialID, credentialPublicKey, counter, transports, userId])
+
+  return userId
 }

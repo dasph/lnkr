@@ -1,2 +1,2 @@
-export * from '~/types/wrapper.ts'
+export * from '~/types/common.ts'
 export * from '~/types/postgres.ts'

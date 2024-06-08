@@ -16,6 +16,13 @@ export type Passkey = {
   lastUsedAt: Date
 }
 
+export type Token = {
+  id: string
+  userId: string
+  createdAt: Date
+  lastUsedAt: Date
+}
+
 export type Tag = {
   id: string
   value: string

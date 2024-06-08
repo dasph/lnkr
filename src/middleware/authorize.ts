@@ -1,14 +1,21 @@
-import { Middleware, Status } from 'oak'
+import { type RouterMiddleware, Status } from 'oak'
 
+import type { AuthorizedState } from '~/types/mod.ts'
+
+import { verify } from '~/services/mod.ts'
+
+// TODO: fix route value
+type Middleware = RouterMiddleware<'', Record<never, never>, AuthorizedState>
 type MiddlewareArgs = Parameters<Middleware>
 
-const secret = Deno.env.get('AUTHORIZATION')
-if (!secret) throw new Error('no authorization secret defined')
+export const authorize: Middleware = async (ctx: MiddlewareArgs[0], next) => {
+  const token = await ctx.cookies.get('access-token')
+  ctx.assert(token, Status.Unauthorized)
 
-export const authorize: Middleware = (ctx: MiddlewareArgs[0], next) => {
-  const auth = ctx.request.headers.get('authorization')
+  const payload = await verify(token).catch(() => undefined)
+  ctx.assert(payload && payload.sub && payload.name, Status.Unauthorized)
 
-  ctx.assert(typeof auth === 'string' && auth === secret, Status.Unauthorized)
+  ctx.state.user = { id: payload.sub, name: `${payload.name}` }
 
   return next()
 }
