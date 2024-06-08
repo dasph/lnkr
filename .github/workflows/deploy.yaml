@@ -19,27 +19,35 @@ jobs:
       contents: 'read'
       id-token: 'write'
 
+    env:
+      IMAGE: ${{ secrets.REGISTRY_URL }}/${{ vars.SERVICE }}
+
     steps:
     - name: Checkout 🛎️
       uses: actions/checkout@v4
 
+    - name: Set up Docker Buildx ⚓
+      uses: docker/setup-buildx-action@v3
+
     - name: Authenticate to the Registry 🔑
-      run: echo '${{ secrets.REGISTRY_PASSWORD }}' | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USER }} --password-stdin
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ secrets.REGISTRY_URL }}
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - name: Build and Push Container 🏗️
-      run: |-
-        REPO=${{ secrets.REGISTRY_URL }}/${{ vars.SERVICE }}
-        IMAGE=$REPO:${{ github.sha }}
-        docker build -t $IMAGE \
-          --build-arg RP=${{ vars.RP }} \
-          --build-arg PORT=${{ vars.PORT }} \
-          --build-arg AUTHORIZATION=${{ secrets.AUTHORIZATION }} ./
-        docker tag $IMAGE $REPO:latest
-        docker push $REPO:latest
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: ${{ env.IMAGE }}:latest
+        cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
+        cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+        build-args: |
+          RP=${{ vars.RP }}
+          PORT=${{ vars.PORT }}
+          AUTHORIZATION=${{ secrets.AUTHORIZATION }}
 
     - name: Deploy 🚀
       run: |-
         curl ${{ secrets.CD_URL }}/${{ vars.SERVICE }} -H 'authorization: ${{ secrets.CD_AUTHORIZATION }}'
-
-    # - name: Cleanup the Registry 🧹
-    #   run: |-
