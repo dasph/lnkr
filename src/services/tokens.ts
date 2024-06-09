@@ -34,7 +34,7 @@ export const tokens = async (props: IssueProps | RefreshProps): Promise<Tokens> 
   const { name, tokenId, userId } = await ('userId' in props ? issue(props) : refresh(props))
 
   return Promise.all([
-    create({ sub: tokenId, exp: getNumericDate(tokenExpiration.access) }),
-    create({ sub: userId, name, exp: getNumericDate(tokenExpiration.refresh) })
+    create({ sub: tokenId, exp: getNumericDate(tokenExpiration.refresh) }),
+    create({ sub: userId, name, exp: getNumericDate(tokenExpiration.access) })
   ]).then(([refresh, access]) => ({ refresh, access }))
 }
