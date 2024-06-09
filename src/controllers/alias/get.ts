@@ -3,8 +3,8 @@ import { RouterMiddleware, Status } from 'oak'
 import type { Link, LocalState } from '~/types/mod.ts'
 
 import { hit } from '~/services/mod.ts'
-import { decode65 } from '~/helpers/mod.ts'
 import { postgres } from '~/middleware/mod.ts'
+import { decode65, toUtf8 } from '~/helpers/mod.ts'
 
 type Params = {
   alias: string
@@ -35,8 +35,8 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
 
   ctx.assert(link, Status.NotFound)
 
-  const town = ctx.request.headers.get('cf-ipcity')?.slice(0, 32) || ''
   const country = ctx.request.headers.get('cf-ipcountry')?.slice(0, 2) || '00'
+  const town = toUtf8(ctx.request.headers.get('cf-ipcity')?.slice(0, 32) || '')
   const location = `(${(ctx.request.headers.get('cf-iplatitude') || '0')}, ${ctx.request.headers.get('cf-iplongitude') || '0'})`
   const [ip] = ctx.request.headers.get('x-forwarded-for')?.split(',').map((value) => value.trim()) || [ctx.request.ip]
 
