@@ -11,7 +11,7 @@ type State = {
   tags: string[]
 }
 
-type Middleware = RouterMiddleware<'', Record<never, never>, AuthorizedState<State>>
+type Middleware = RouterMiddleware<'/', Record<never, never>, AuthorizedState<State>>
 type MiddlewareArgs = Parameters<Middleware>
 
 const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
