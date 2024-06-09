@@ -32,6 +32,7 @@ export type Tag = {
 
 export type Ip = {
   id: string
+  town: string
   contry: string
   location: Point
   updatedAt: Date
