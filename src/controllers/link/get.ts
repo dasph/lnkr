@@ -2,6 +2,7 @@ import { type RouterMiddleware, Status } from 'oak'
 
 import type { AuthorizedState, Hit, Ip, Link } from '~/types/mod.ts'
 
+import { encode65 } from '~/helpers/mod.ts'
 import { postgres } from '~/middleware/mod.ts'
 
 type Params = {
@@ -32,7 +33,9 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   if (!linkId) {
     const { rows: links } = await postgres.queryObject<Pick<Link, 'id' | 'value' | 'createdAt'>>(`select id, value, "createdAt" from links where "userId" = $1 order by "createdAt" desc`, [user.id])
 
-    return void (ctx.response.body = links)
+    const decoded = links.map(({ id, value, createdAt }) => ({ id, createdAt, alias: encode65(id), value: decodeURI(atob(value)) }))
+
+    return void (ctx.response.body = decoded)
   }
 
   const { rows: [link] } = await postgres.queryObject<Pick<Link, 'id' | 'value' | 'createdAt'>>(`select id, value, "createdAt" from links where id = $1 and "userId" = $2`, [linkId, user.id])
