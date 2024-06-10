@@ -21,7 +21,7 @@ const validator: Middleware = (ctx: MiddlewareArgs[0], next) => {
   const { alias } = ctx.params
 
   const id = decode65(alias)
-  ctx.assert(Number.isInteger(id), Status.BadRequest, 'Invalid alias')
+  ctx.assert(Number.isInteger(id) && id < 2 ** 31, Status.BadRequest, 'Invalid alias')
 
   ctx.state.local = { id }
 
