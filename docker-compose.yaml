@@ -27,7 +27,7 @@ services:
 
   init:
     image: registry.nyzhnyk.dev/lnkr:latest
-    user: $USER
+    user: $UID:$GID
     profiles: [init]
     network_mode: none
     volumes:
