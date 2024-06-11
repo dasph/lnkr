@@ -25,6 +25,15 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
 
+  init:
+    image: registry.nyzhnyk.dev/lnkr:latest
+    user: $USER
+    profiles: [init]
+    network_mode: none
+    volumes:
+      - ./:/mnt
+    entrypoint: ['sh', '-c', 'tar -xzf init.tar.gz -C /mnt']
+
 networks:
   nginx:
     name: nginx

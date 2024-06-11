@@ -1,3 +1,11 @@
+FROM alpine as init
+
+WORKDIR /app
+
+COPY docker-compose.yaml init-db.sh .
+
+RUN tar -czf init.tar.gz *
+
 FROM denoland/deno:alpine-1.44.0 as cache
 
 WORKDIR /app
@@ -24,6 +32,8 @@ ARG RP
 ARG PORT
 
 ENV LD_LIBRARY_PATH=/usr/local/lib RP=${RP} PORT=${PORT}
+
+COPY --from=init /app .
 
 COPY --from=cache --chown=root:root --chmod=755 /lib /lib
 COPY --from=cache --chown=root:root --chmod=755 /lib64 /lib64
