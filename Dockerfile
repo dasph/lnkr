@@ -33,7 +33,7 @@ ARG PORT
 
 ENV LD_LIBRARY_PATH=/usr/local/lib RP=${RP} PORT=${PORT}
 
-COPY --from=init /app .
+COPY --from=init /app/init.tar.gz .
 
 COPY --from=cache --chown=root:root --chmod=755 /lib /lib
 COPY --from=cache --chown=root:root --chmod=755 /lib64 /lib64
