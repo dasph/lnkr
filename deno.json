@@ -8,10 +8,21 @@
       "singleQuote": true
     }
   },
-  "importMap": "./map.json",
   "tasks": {
     "run": "deno run --allow-net --allow-env ./src/mod.ts",
     "build": "deno compile --cached-only --allow-net --allow-env -o ./dist/lnkr ./src/mod.ts",
     "serve": "export $(cat ./.env | xargs) && deno run --allow-net --allow-env --watch ./src/mod.ts"
-  }
+  },
+  "imports": {
+    "~/": "./src/",
+    "oak": "https://deno.land/x/oak@v16.0.0/mod.ts",
+    "oak/deps": "https://deno.land/x/oak@v16.0.0/deps.ts",
+    "cors": "https://deno.land/x/cors@v1.2.2/mod.ts",
+    "djwt": "https://deno.land/x/djwt@v3.0.2/mod.ts",
+    "redis": "https://deno.land/x/redis@v0.32.3/mod.ts",
+    "postgres": "https://deno.land/x/postgres@v0.19.3/mod.ts",
+    "postgres/types": "https://deno.land/x/postgres@v0.19.3/query/types.ts",
+    "simplewebauthn/types": "https://deno.land/x/simplewebauthn@v10.0.0/deno/types.ts",
+    "simplewebauthn/server": "https://deno.land/x/simplewebauthn@v10.0.0/deno/server.ts"
+ }
 }

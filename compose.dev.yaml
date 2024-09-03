@@ -1,12 +1,12 @@
 services:
   redis:
     extends:
-      file: docker-compose.yaml
+      file: compose.yaml
       service: redis
     network_mode: host
 
   postgres:
     extends:
-      file: docker-compose.yaml
+      file: compose.yaml
       service: postgres
     network_mode: host
