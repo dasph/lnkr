@@ -1,7 +1,6 @@
 import type { RouterMiddleware } from 'oak'
-import type { PublicKeyCredentialRequestOptionsJSON } from 'simplewebauthn/types'
 
-import { generateAuthenticationOptions } from 'simplewebauthn/server'
+import { generateAuthenticationOptions, type PublicKeyCredentialRequestOptionsJSON } from 'simplewebauthn'
 
 import type { AuthPayload } from '~/types/mod.ts'
 

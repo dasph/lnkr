@@ -1,5 +1,4 @@
-import type { VerifiedRegistrationResponse } from 'simplewebauthn/server'
-import type { AuthenticatorAttestationResponseJSON } from 'simplewebauthn/types'
+import type { VerifiedRegistrationResponse, AuthenticatorAttestationResponseJSON } from 'simplewebauthn'
 
 import type { Passkey, User } from '~/types/mod.ts'
 
@@ -13,7 +12,7 @@ type SigninProps = {
 type SignupProps = {
   name: string
   response: AuthenticatorAttestationResponseJSON
-  registrationInfo: Required<VerifiedRegistrationResponse>['registrationInfo']
+  credential: Required<VerifiedRegistrationResponse>['registrationInfo']['credential']
 }
 
 export const signin = async ({ counter, id }: SigninProps): Promise<string> => {
@@ -22,12 +21,12 @@ export const signin = async ({ counter, id }: SigninProps): Promise<string> => {
   return userId
 }
 
-export const signup = async ({ name, response, registrationInfo: { counter, credentialID, credentialPublicKey } }: SignupProps): Promise<string> => {
+export const signup = async ({ name, response, credential: { counter, id, publicKey } }: SignupProps): Promise<string> => {
   const transports = response.transports?.join(',') || ''
 
   const { rows: [{ id: userId }] } = await postgres.queryObject<Pick<User, 'id'>>(`insert into users (name) values ($1) returning id`, [name])
 
-  await postgres.queryObject(`insert into passkeys (id, key, counter, transports, "userId") values ($1, $2, $3, $4, $5)`, [credentialID, credentialPublicKey, counter, transports, userId])
+  await postgres.queryObject(`insert into passkeys (id, key, counter, transports, "userId") values ($1, $2, $3, $4, $5)`, [id, publicKey, counter, transports, userId])
 
   return userId
 }

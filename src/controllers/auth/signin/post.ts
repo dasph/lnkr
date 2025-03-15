@@ -1,7 +1,5 @@
-import type { AuthenticationResponseJSON } from 'simplewebauthn/types'
-
 import { RouterMiddleware, Status } from 'oak'
-import { verifyAuthenticationResponse } from 'simplewebauthn/server'
+import { verifyAuthenticationResponse, type  AuthenticationResponseJSON} from 'simplewebauthn'
 
 import type { LocalState, AuthPayload } from '~/types/mod.ts'
 
@@ -40,10 +38,10 @@ const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const { expectedChallenge, response } = ctx.state.local
   const id = response.id
 
-  const authenticator = await queryAuthenticator({ id })
-  ctx.assert(authenticator, Status.NotFound, 'Passkey not found')
+  const credential = await queryAuthenticator({ id })
+  ctx.assert(credential, Status.NotFound, 'Passkey not found')
 
-  const { verified, authenticationInfo } = await verifyAuthenticationResponse({ authenticator, expectedChallenge, expectedOrigin, expectedRPID, response })
+  const { verified, authenticationInfo } = await verifyAuthenticationResponse({ credential, expectedChallenge, expectedOrigin, expectedRPID, response })
   ctx.assert(authenticationInfo, Status.Conflict, 'Failed to verify the authentication')
 
   const userId = await signin({ id, counter: BigInt(authenticationInfo.newCounter) })

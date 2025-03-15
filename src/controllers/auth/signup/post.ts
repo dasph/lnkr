@@ -1,7 +1,5 @@
-import type { RegistrationResponseJSON } from 'simplewebauthn/types'
-
 import { type RouterMiddleware, Status } from 'oak'
-import { verifyRegistrationResponse } from 'simplewebauthn/server'
+import { verifyRegistrationResponse, type RegistrationResponseJSON } from 'simplewebauthn'
 
 import type { LocalState, AuthPayload } from '~/types/mod.ts'
 
@@ -42,11 +40,11 @@ const validator: Middleware = async (ctx: MiddlewareArgs[0], next) => {
 const handler: Middleware = async (ctx: MiddlewareArgs[0]) => {
   const { name, expectedChallenge, response } = ctx.state.local
 
-  const { verified, registrationInfo } = await verifyRegistrationResponse({ response, expectedRPID, expectedOrigin, expectedChallenge })
+  const { verified, registrationInfo: { credential } = {} } = await verifyRegistrationResponse({ response, expectedRPID, expectedOrigin, expectedChallenge })
 
-  ctx.assert(registrationInfo, Status.Conflict, 'Failed to verify the registration')
+  ctx.assert(credential, Status.Conflict, 'Failed to verify the registration')
 
-  const userId = await signup({ name, registrationInfo, response: response.response })
+  const userId = await signup({ name, credential, response: response.response })
 
   const cookies = await tokens({ userId }).then(tokenCookies)
   await Promise.all(cookies.map((args) => ctx.cookies.set(...args)))
