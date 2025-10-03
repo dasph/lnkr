@@ -1,12 +1,15 @@
 services:
   redis:
     extends:
-      file: compose.yaml
+      file: compose.yml
       service: redis
     network_mode: host
 
   postgres:
     extends:
-      file: compose.yaml
+      file: compose.yml
       service: postgres
     network_mode: host
+
+volumes:
+  lnkr:
