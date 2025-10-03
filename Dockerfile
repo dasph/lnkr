@@ -1,4 +1,4 @@
-FROM denoland/deno:alpine-2.2.4 AS deno
+FROM denoland/deno:alpine-2.5.2 AS deno
 FROM golang:1.25-alpine3.22 AS goose
 
 WORKDIR /app

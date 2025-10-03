@@ -8,7 +8,7 @@ export type User = {
 
 export type Passkey = {
   id: string
-  key: Uint8Array
+  key: Uint8Array<ArrayBuffer>
   counter: bigint
   transports: string
   userId: string
