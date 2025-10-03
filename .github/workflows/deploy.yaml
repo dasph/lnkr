@@ -37,6 +37,7 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - name: Build and Push Container 🏗️
+      id: build
       uses: docker/build-push-action@v5
       with:
         push: true
@@ -49,4 +50,7 @@ jobs:
 
     - name: Deploy 🚀
       run: |-
-        curl ${{ secrets.CD_URL }}/${{ vars.SERVICE }} -H 'authorization: ${{ secrets.CD_AUTHORIZATION }}'
+        sed -i "s|\${REGISTRY_URL}|${{ secrets.REGISTRY_URL }}/|g" compose.yml
+        sed -i "s|${{ vars.SERVICE }}:latest|${{ vars.SERVICE }}@${{ steps.build.outputs.digest }}|g" compose.yml
+
+        curl ${{ secrets.CD_URL }}/${{ vars.SERVICE }} -H 'authorization: ${{ secrets.CD_AUTHORIZATION }}' -F compose=@compose.yml
