@@ -4,7 +4,7 @@ FROM golang:1.25-alpine3.22 AS goose
 WORKDIR /app
 
 RUN apk add --no-cache git upx && \
-    git clone https://github.com/pressly/goose . && \
+    git clone --depth 1 https://github.com/pressly/goose . && \
     go mod tidy && \
     go build \
       -ldflags="-s -w" \
